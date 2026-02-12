@@ -594,25 +594,26 @@
 
         /* Input ville */
         .city-search-group input {
-            flex: 1;
+            flex: 4;
+            min-width: 0;
         }
 
-        /* Bouton loupe plus discret */
-        .btn-search-icon {
-            padding: 0 18px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .city-search-group .btn-search-icon {
+            flex: 1;
+            padding: 0;
         }
+
+        .btn-search-icon {
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 600;
+        }
+
 
         .btn-search-icon:hover {
             border-color: var(--accent-cyan);
             box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
         }
-
-
 
     </style>
 </head>
@@ -719,23 +720,23 @@
                 </div>
                 <div style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(16, 185, 129, 0.05)); border-radius: 10px; border-left: 4px solid var(--accent-cyan);">
                     <div style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 8px; font-weight: 600;">
-                        🚁 Vérification des zones UAS 
+                        🚁 Vérification des zones UAS général
                         <a href="https://www.drone-spot.tech/" target="_blank" 
                         style="font-weight: 400; font-size: 1rem; color: #f59e0b; margin-left: 5px; text-decoration: underline;">
                             (Drone Spot)
                         </a>
                     </div>
                     <div style="font-size: 0.80rem; color: var(--text-secondary); line-height: 1.5;">
-                        Cliquez sur le marqueur de votre position pour accéder directement à la carte officielle Géoportail avec les restrictions de vol.
+                        Entrez un pays pour avoir les restrictions locales
                     </div>
                 </div>
+                <div id="droneMapLinkContainer"></div>
                 <div id="map"></div>
 
                 <div class="info-box">
-                    <h4>⚠️ Informations importantes</h4>
+                    <h4>⚠️</h4>
                     <p>
-                        Cette carte affiche les zones de restrictions pour les drones de catégorie ouverte (< 25kg) selon la réglementation française.
-                        <strong>Vérifiez toujours les conditions locales avant de voler.</strong> Rouge = interdit, Orange = hauteur limitée.
+                        Nothing to Report, take care.
                     </p>
                 </div>
 
@@ -871,6 +872,14 @@
 
                 const lat = geoData.results[0].latitude;
                 const lon = geoData.results[0].longitude;
+                
+                const countryCode = geoData.results[0].country_code;
+                const countryName = geoData.results[0].country;
+
+                getDroneMapByCountry(countryCode, countryName);
+
+                fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=fr`)
+
                 await fetchWeatherData(lat, lon);
                 initMap(lat, lon);
             } catch (error) {
@@ -1201,6 +1210,85 @@
 
             document.getElementById('filterResult').innerHTML = html;
         }
+
+
+        function getDroneMapByCountry(countryCode, countryName = "") {
+
+            const droneMaps = {
+
+                // 🇪🇺 EUROPE
+                BE: "https://map.droneguide.be/",
+                AT: "https://utm.dronespace.at/avm/",
+                CZ: "https://dronemap.gov.cz/",
+                DK: "https://www.en.droneregler.dk/uas-geographical-zones",
+                EE: "https://utm.eans.ee/avm/",
+                IE: "https://www.iaa.ie/general-aviation/drones/uas-geographic-zones",
+                IT: "https://www.d-flight.it/web-app/",
+                LV: "https://www.airspace.lv/drones",
+                LT: "https://utm.ans.lt/avm/",
+                NL: "https://map.godrone.nl/",
+                PL: "https://dronemap.pansa.pl/",
+                RO: "https://flightplan.romatsa.ro/init/drones",
+                SE: "https://daim.lfv.se/echarts/dronechart/",
+                CH: "https://map.geo.admin.ch/",
+                DE: "https://maptool-dipul.dfs.de/?language=en&zoom=10.7",
+                ES: "", // Espagne (à compléter plus tard)
+                GB: "", // Royaume-Uni (à compléter plus tard)
+
+
+                // 🌎 AUTRES
+                US: "https://faa.maps.arcgis.com/apps/webappviewer/index.html?id=9c2e4406710048b59bca7c8e8b9a02b3",
+                CA: "https://nrc.canada.ca/en/drone-tool/",
+                AU: "https://dronecompliance.casa.gov.au/map",
+                NZ: "https://www.airshare.co.nz/maps",
+                BR: "https://www.decea.mil.br/drone",
+                JP: "https://www.mlit.go.jp/koku/drone/en/"
+            };
+
+            const container = document.getElementById("droneMapLinkContainer");
+
+            // 🔁 Toujours vider avant d'afficher
+            container.innerHTML = "";
+
+            // 🇫🇷 Si France → ne rien afficher
+            if (countryCode === "FR") {
+                return;
+            }
+
+            if (countryCode in droneMaps) {
+                const flag = getFlagEmoji(countryCode);
+
+                container.innerHTML = `
+                    <div style="margin-bottom:15px; padding:15px; 
+                                background:rgba(245,158,11,0.1);
+                                border-left:4px solid var(--accent-orange);
+                                border-radius:8px;">
+                        🌍 Restrictions drone officielles détectées pour 
+                        <strong>${countryName || countryCode}</strong><br><br>
+                        <button 
+                            ${droneMaps[countryCode] ? 
+                                `onclick="window.open('${droneMaps[countryCode]}','_blank')"` 
+                                : 'disabled'}
+                            style="padding:10px 15px; ${!droneMaps[countryCode] ? 'opacity:0.5; cursor:not-allowed;' : ''}">
+                            🔎 Voir la carte officielle ${flag}
+                        </button>
+
+                    </div>
+                `;
+            }
+        }
+
+        function getFlagEmoji(countryCode) {
+            if (!countryCode || countryCode.length !== 2) return "";
+
+            return countryCode
+                .toUpperCase()
+                .replace(/./g, char => 
+                    String.fromCodePoint(127397 + char.charCodeAt())
+                );
+        }
+
+
 
         // Initialisation au chargement
         window.onload = function() {
