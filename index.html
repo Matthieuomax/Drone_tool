@@ -7,18 +7,13 @@
     <meta name="apple-mobile-web-app-title" content="🔎Drone Tool">
     <meta charset="UTF-8">
     <link rel="apple-touch-icon" href="icon.png">
-
     <title>🔎Drone FiltreND</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Inconsolata:wght@400;600&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --bg-primary: #0a0e1a;
@@ -33,625 +28,283 @@
             --border-color: #2d3748;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Rajdhani', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 50%);
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(6,182,212,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(16,185,129,0.06) 0%, transparent 50%);
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
         header {
-            text-align: center;
-            padding: 40px 20px;
+            text-align: center; padding: 30px 20px;
             border-bottom: 2px solid var(--border-color);
             background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
-            margin-bottom: 40px;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 30px; position: relative; overflow: hidden;
         }
-
         header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 10px,
-                rgba(6, 182, 212, 0.03) 10px,
-                rgba(6, 182, 212, 0.03) 20px
-            );
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(6,182,212,0.03) 10px, rgba(6,182,212,0.03) 20px);
             animation: slide 20s linear infinite;
         }
-
-        @keyframes slide {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
+        @keyframes slide { 0% { transform: translate(0,0); } 100% { transform: translate(50px,50px); } }
 
         h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: 10px;
+            font-size: 3rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 6px;
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
-            z-index: 1;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1;
         }
+        .subtitle { font-size: 1.1rem; color: var(--text-secondary); font-weight: 300; position: relative; z-index: 1; }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            font-weight: 300;
-            position: relative;
-            z-index: 1;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; margin-bottom: 20px; }
 
         .card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 25px;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            background: var(--bg-card); border-radius: 14px; padding: 22px;
+            border: 1px solid var(--border-color); transition: all 0.3s ease; position: relative; overflow: hidden;
         }
-
         .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
+            transform: scaleX(0); transition: transform 0.3s ease;
         }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
-        }
-
-        .card:hover::before {
-            transform: scaleX(1);
-        }
+        .card:hover { transform: translateY(-4px); border-color: var(--accent-cyan); box-shadow: 0 8px 25px rgba(6,182,212,0.18); }
+        .card:hover::before { transform: scaleX(1); }
 
         .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);
         }
+        .card-title { font-size: 1.3rem; font-weight: 600; color: var(--accent-cyan); font-family: 'Inconsolata', monospace; }
 
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--accent-cyan);
-            font-family: 'Inconsolata', monospace;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .status-green { background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
-        .status-orange { background: var(--accent-orange); box-shadow: 0 0 10px var(--accent-orange); }
-        .status-red { background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); }
-
-        .location-input {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+        .status-indicator { width: 11px; height: 11px; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .status-green { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+        .status-orange { background: var(--accent-orange); box-shadow: 0 0 8px var(--accent-orange); }
+        .status-red { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
 
         input, select {
-            flex: 1;
-            padding: 12px 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            width: 100%; padding: 10px 14px; background: var(--bg-secondary);
+            border: 1px solid var(--border-color); border-radius: 8px;
+            color: var(--text-primary); font-family: 'Rajdhani', sans-serif; font-size: 0.95rem; transition: all 0.3s ease;
         }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
-        }
+        input:focus, select:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(6,182,212,0.1); }
 
         button {
-            padding: 12px 24px;
+            padding: 10px 20px;
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            border: none; border-radius: 8px; color: white; font-weight: 600;
+            cursor: pointer; font-family: 'Rajdhani', sans-serif; font-size: 0.95rem;
+            transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
         }
+        button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(6,182,212,0.4); }
+        button:active { transform: translateY(0); }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(6, 182, 212, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .weather-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .weather-item {
-            background: var(--bg-secondary);
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .weather-value .unit {
-            font-size: 0.75em;
-            opacity: 0.7;
-        }
-
-        .weather-item .subtext {
-            font-size: 1rem;
-            opacity: 0.7;
-            margin-top: 4px;
-        }
-
-
-        .weather-item.safe {
-            border-left-color: var(--accent-green);
-            background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), var(--bg-secondary));
-        }
-
-        .weather-item.warning {
-            border-left-color: var(--accent-orange);
-            background: linear-gradient(90deg, rgba(245, 158, 11, 0.1), var(--bg-secondary));
-        }
-
-        .weather-item.danger {
-            border-left-color: var(--accent-red);
-            background: linear-gradient(90deg, rgba(239, 68, 68, 0.1), var(--bg-secondary));
-        }
-
-        .weather-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-            font-family: 'Inconsolata', monospace;
-        }
-
-        .weather-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .overall-status {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .overall-status.safe {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
-            color: var(--accent-green);
-            border: 2px solid var(--accent-green);
-        }
-
-        .overall-status.warning {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
-            color: var(--accent-orange);
-            border: 2px solid var(--accent-orange);
-        }
-
-        .overall-status.danger {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
-            color: var(--accent-red);
-            border: 2px solid var(--accent-red);
-        }
-
-        .filter-calculator {
-            display: grid;
-            gap: 15px;
-        }
-
-        .filter-result {
-            background: var(--bg-secondary);
-            padding: 20px;
-            border-radius: 12px;
-            border: 2px solid var(--accent-cyan);
-            margin-top: 20px;
-        }
-
-        .filter-recommendation {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: linear-gradient(90deg, rgba(6, 182, 212, 0.1), transparent);
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--accent-cyan);
-        }
-
-        .filter-recommendation:last-child {
-            margin-bottom: 0;
-        }
-
-        .filter-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--accent-cyan);
-        }
-
-        .filter-details {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            margin-top: 5px;
-        }
-
-        .shutter-speed {
-            font-size: 1.1rem;
-            font-weight: 600;
-            font-family: 'Inconsolata', monospace;
-            color: var(--accent-green);
-        }
-
-        #map {
-            height: 500px;
-            border-radius: 12px;
-            border: 2px solid var(--border-color);
-        }
-
-        .map-card {
-            grid-column: 1 / -1;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-
-        .info-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: rgba(6, 182, 212, 0.2);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--accent-cyan);
-            margin-left: 10px;
-            font-family: 'Inconsolata', monospace;
-        }
-
-/* RESPONSIVE - MODE TÉLÉPHONE */
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            header {
-                padding: 25px 15px;
-                margin-bottom: 20px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .card {
-                padding: 18px;
-            }
-
-            .card-title {
-                font-size: 1.2rem;
-            }
-
-            .weather-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
-            .weather-item {
-                padding: 12px;
-            }
-
-            .weather-value {
-                font-size: 1.5rem;
-            }
-
-            .location-input {
-                flex-direction: column;
-            }
-
-            .location-input input {
-                width: 100%;
-            }
-
-            .location-input button {
-                width: 100%;
-                padding: 14px;
-            }
-
-            .filter-calculator select,
-            .filter-calculator input,
-            .filter-calculator button {
-                font-size: 1rem;
-                padding: 14px;
-            }
-
-            #map {
-                height: 350px;
-            }
-
-            .filter-recommendation {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .overall-status {
-                font-size: 1.1rem;
-                padding: 15px;
-            }
-        }
-
-        /* MODE TRÈS PETIT TÉLÉPHONE */
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .subtitle {
-                font-size: 0.9rem;
-            }
-
-            .card {
-                padding: 15px;
-            }
-
-            .weather-value {
-                font-size: 1.3rem;
-            }
-
-            .unit {
-                font-size: 0.9rem;
-            }
-
-            #map {
-                height: 300px;
-            }
-
-            button {
-                padding: 12px 20px;
-                font-size: 0.9rem;
-            }
-        }
-
-        /* MODE PAYSAGE TÉLÉPHONE */
-        @media (max-width: 900px) and (orientation: landscape) {
-            header {
-                padding: 20px 15px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .map-card {
-                grid-column: 1 / -1;
-            }
-
-            #map {
-                height: 300px;
-            }
-        }
-        
-        .info-box {
-            background: rgba(245, 158, 11, 0.1);
-            border-left: 4px solid var(--accent-orange);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .info-box h4 {
-            color: var(--accent-orange);
-            margin-bottom: 8px;
-            font-size: 1rem;
-        }
-
-        .info-box p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        /* ===== VERSION AMÉLIORÉE LOCATION INPUT ===== */
-
-        .location-input.enhanced {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-bottom: 25px;
-        }
-
-        /* Bouton principal GPS */
+        /* ===== MÉTÉO ===== */
+        .location-input { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
         .btn-location-main {
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: white;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+            border: none; padding: 12px; border-radius: 10px; font-weight: 700;
+            letter-spacing: 1px; text-transform: uppercase; color: white; cursor: pointer;
+            position: relative; overflow: hidden; transition: all 0.3s ease;
+            box-shadow: 0 0 12px rgba(6,182,212,0.35);
+        }
+        .btn-location-main::after { content:""; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(120deg,transparent,rgba(255,255,255,0.25),transparent); transition:0.5s; }
+        .btn-location-main:hover::after { left:100%; }
+        .btn-location-main:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(6,182,212,0.6); }
+        .city-search-group { display: flex; gap: 8px; }
+        .city-search-group input { flex: 1; }
+        .btn-search { flex: 0 0 auto; padding: 10px 14px; font-size: 0.85rem; letter-spacing: 0; text-transform: none; }
+
+        .weather-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .weather-item {
+            background: var(--bg-secondary); padding: 12px; border-radius: 9px;
+            border-left: 3px solid var(--border-color); transition: all 0.3s ease;
+        }
+        .weather-item.safe { border-left-color: var(--accent-green); background: linear-gradient(90deg, rgba(16,185,129,0.08), var(--bg-secondary)); }
+        .weather-item.warning { border-left-color: var(--accent-orange); background: linear-gradient(90deg, rgba(245,158,11,0.08), var(--bg-secondary)); }
+        .weather-item.danger { border-left-color: var(--accent-red); background: linear-gradient(90deg, rgba(239,68,68,0.08), var(--bg-secondary)); }
+        .weather-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 3px; font-family: 'Inconsolata', monospace; }
+        .weather-value { font-size: 1.6rem; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
+        .weather-value .unit { font-size: 0.7em; opacity: 0.7; }
+
+        /* Widget soleil — pleine largeur */
+        .sun-widget {
+            background: var(--bg-secondary); padding: 12px 14px 10px; border-radius: 9px;
+            border-left: 3px solid var(--border-color); grid-column: 1 / -1;
+        }
+        .sun-widget.safe { border-left-color: var(--accent-green); background: linear-gradient(90deg, rgba(16,185,129,0.08), var(--bg-secondary)); }
+        .sun-widget.danger { border-left-color: var(--accent-red); background: linear-gradient(90deg, rgba(239,68,68,0.08), var(--bg-secondary)); }
+        .sun-bar-wrap { position: relative; height: 26px; margin: 6px 0 3px; }
+        .sun-bar-bg { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; height: 5px; background: var(--border-color); border-radius: 3px; }
+        .sun-bar-day {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            height: 5px; background: linear-gradient(90deg, #f59e0b, #fcd34d, #f59e0b);
+            border-radius: 3px;
+        }
+        .sun-icon { position: absolute; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; filter: drop-shadow(0 0 3px rgba(252,211,77,0.8)); }
+        .sun-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-secondary); font-family: 'Inconsolata', monospace; }
+
+        /* Humidité */
+        .humidity-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+        .humidity-bar-bg { flex: 1; height: 5px; background: var(--border-color); border-radius: 3px; }
+        .humidity-bar-fill { height: 5px; border-radius: 3px; }
+
+        .overall-status {
+            margin-top: 14px; padding: 14px; border-radius: 10px;
+            text-align: center; font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .overall-status.safe { background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(16,185,129,0.08)); color: var(--accent-green); border: 2px solid var(--accent-green); }
+        .overall-status.warning { background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(245,158,11,0.08)); color: var(--accent-orange); border: 2px solid var(--accent-orange); }
+        .overall-status.danger { background: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(239,68,68,0.08)); color: var(--accent-red); border: 2px solid var(--accent-red); }
+
+        .loading { text-align: center; padding: 30px; color: var(--text-secondary); font-style: italic; }
+
+        /* ===== FILTRE ND ===== */
+        .filter-calculator { display: grid; gap: 10px; }
+        .mode-bar { display: flex; gap: 6px; background: var(--bg-secondary); padding: 6px; border-radius: 8px; }
+        .mode-btn { flex: 1; padding: 8px 4px; font-size: 0.78rem; }
+        .mode-btn.active { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green)); border: none; }
+        .mode-btn.inactive { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); }
+        .filter-result { background: var(--bg-secondary); padding: 16px; border-radius: 10px; border: 2px solid var(--accent-cyan); margin-top: 14px; }
+        .filter-recommendation {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px; background: linear-gradient(90deg, rgba(6,182,212,0.08), transparent);
+            border-radius: 7px; margin-bottom: 8px; border-left: 3px solid var(--accent-cyan);
+        }
+        .filter-recommendation:last-child { margin-bottom: 0; }
+        .filter-name { font-size: 1.2rem; font-weight: 600; color: var(--accent-cyan); }
+        .filter-details { font-size: 0.88rem; color: var(--text-secondary); margin-top: 3px; }
+        .shutter-speed { font-size: 1rem; font-weight: 600; font-family: 'Inconsolata', monospace; color: var(--accent-green); }
+        .field-label { font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 3px; }
+
+        /* ===== CHECKLIST — compacte ===== */
+        .checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .checklist-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 10px; background: var(--bg-secondary);
+            border-radius: 8px; border: 1px solid var(--border-color);
+            cursor: pointer; transition: all 0.2s ease; user-select: none;
+        }
+        .checklist-item:hover { border-color: var(--accent-cyan); }
+        .checklist-item.checked { border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.06); }
+        .check-box {
+            width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            font-size: 0.7rem; transition: all 0.2s ease;
+        }
+        .checklist-item.checked .check-box { background: var(--accent-green); border-color: var(--accent-green); color: white; }
+        .check-label { font-size: 0.85rem; color: var(--text-primary); line-height: 1.2; }
+        .checklist-item.checked .check-label { color: var(--text-secondary); }
+        .checklist-status {
+            margin-top: 10px; padding: 10px 14px; border-radius: 8px; text-align: center;
+            font-size: 0.95rem; font-weight: 600; letter-spacing: 1px;
+            border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-secondary);
+            transition: all 0.4s ease;
+        }
+        .checklist-status.all-done { border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.08); color: var(--accent-green); }
+
+        /* ===== CONVERSION VENT — compacte ===== */
+        .wind-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        .wind-input-row input { flex: 1; }
+        .wind-input-row select { width: 100px; flex: 0 0 auto; }
+        .wind-conv-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+        .wind-conv-item {
+            background: var(--bg-secondary); border-radius: 8px; padding: 8px 4px;
+            border: 1px solid var(--border-color); text-align: center;
+        }
+        .wind-conv-label { font-size: 0.7rem; color: var(--text-secondary); font-family: 'Inconsolata', monospace; }
+        .wind-conv-value { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); font-family: 'Inconsolata', monospace; }
+        .wind-ref { margin-top: 10px; padding: 8px 10px; background: rgba(6,182,212,0.06); border-radius: 7px; border-left: 2px solid var(--accent-cyan); }
+        .wind-ref-line { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6; }
+
+        /* ===== CARTE ===== */
+        .map-card { grid-column: 1 / -1; }
+        #map { height: 480px; border-radius: 10px; border: 2px solid var(--border-color); }
+        .info-badge { display: inline-block; padding: 3px 10px; background: rgba(6,182,212,0.2); border-radius: 20px; font-size: 0.8rem; color: var(--accent-cyan); margin-left: 8px; font-family: 'Inconsolata', monospace; }
+        .info-box { background: rgba(245,158,11,0.08); border-left: 3px solid var(--accent-orange); padding: 12px; border-radius: 7px; margin-top: 12px; }
+        .info-box p { color: var(--text-secondary); font-size: 0.88rem; }
+
+        /* ===== RESPONSIVE portrait ===== */
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            header { padding: 20px 12px; margin-bottom: 16px; }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.9rem; }
+            .grid { grid-template-columns: 1fr; gap: 12px; }
+            .card { padding: 16px; }
+            .card-title { font-size: 1.1rem; }
+            .weather-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .weather-value { font-size: 1.4rem; }
+            .checklist-grid { grid-template-columns: 1fr; }
+            .wind-conv-grid { grid-template-columns: repeat(3, 1fr); }
+            #map { height: 320px; }
+            .filter-recommendation { flex-direction: column; gap: 8px; }
+            .overall-status { font-size: 1rem; padding: 12px; }
         }
 
-        /* Effet glow animé */
-        .btn-location-main::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                120deg,
-                transparent,
-                rgba(255,255,255,0.3),
-                transparent
-            );
-            transition: 0.6s;
+        /* ===== RESPONSIVE très petit ===== */
+        @media (max-width: 400px) {
+            h1 { font-size: 1.5rem; }
+            .card { padding: 12px; }
+            .weather-value { font-size: 1.2rem; }
+            #map { height: 260px; }
+            .wind-conv-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
-        .btn-location-main:hover::after {
-            left: 100%;
+        /* ===== RESPONSIVE paysage téléphone ===== */
+        @media (max-height: 500px) and (orientation: landscape) {
+            header { padding: 12px 15px; margin-bottom: 12px; }
+            h1 { font-size: 1.6rem; margin-bottom: 2px; }
+            .subtitle { font-size: 0.85rem; }
+            .grid { grid-template-columns: repeat(2, 1fr); }
+            .map-card { grid-column: 1 / -1; }
+            #map { height: 260px; }
+            .card { padding: 14px; }
+            .weather-grid { grid-template-columns: repeat(3, 1fr); }
         }
 
-        .btn-location-main:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.7);
+        /* ===== RESPONSIVE tablette paysage ===== */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+            .map-card { grid-column: 1 / -1; }
         }
-
-        /* Groupe recherche ville */
-        .city-search-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        /* Input ville */
-        .city-search-group input {
-            flex: 4;
-            min-width: 0;
-        }
-
-        .city-search-group .btn-search-icon {
-            flex: 1;
-            padding: 0;
-        }
-
-        .btn-search-icon {
-            text-transform: none;
-            letter-spacing: 0;
-            font-weight: 600;
-        }
-
-
-        .btn-search-icon:hover {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
-        }
-
     </style>
 </head>
 <body>
     <header>
         <h1>🚁 Drone / FPV</h1>
-        <p class="subtitle">Info météo & vol, Filtre ND & Carte intéractive</p>
+        <p class="subtitle">Météo · Filtre ND · Carte · Checklist · Conversion vent</p>
     </header>
 
     <div class="container">
+
+        <!-- ROW 1 : Météo + Filtre ND -->
         <div class="grid">
-            <!-- Météo Card -->
+
+            <!-- MÉTÉO -->
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">CONDITIONS MÉTÉO</h2>
                     <div class="status-indicator" id="weatherStatus"></div>
                 </div>
-
-
-                <div class="location-input enhanced">
-                    <button class="btn-location-main" onclick="getWeatherByLocation()">
-                        📡 UTILISER MA POSITION
-                    </button>
-
+                <div class="location-input">
+                    <button class="btn-location-main" onclick="getWeatherByLocation()">📡 UTILISER MA POSITION</button>
                     <div class="city-search-group">
                         <input type="text" id="cityInput" placeholder="Entrer une ville">
-                        <button class="btn-search-icon" onclick="getWeatherByCity()">
-                            🔍Recherche
-                        </button>
+                        <button class="btn-search" onclick="getWeatherByCity()">🔍 Recherche</button>
                     </div>
                 </div>
-
-                <div id="weatherData" class="loading">
-                    Chargement des données météo...
-                </div>
+                <div id="weatherData" class="loading">Données météo...</div>
             </div>
 
-            <!-- ND Filter Calculator -->
+            <!-- FILTRE ND -->
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">CALCULATEUR FILTRE ND</h2>
@@ -659,672 +312,593 @@
                 </div>
 
                 <div class="filter-calculator">
-                    <!-- Mode Switch -->
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px; background: var(--bg-secondary); padding: 8px; border-radius: 8px;">
-                        <button id="autoModeBtn" onclick="switchMode('auto')" style="flex: 1; padding: 10px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green)); font-size: 0.9rem;">
-                            ⚡ AUTO
-                        </button>
-                        <button id="manualModeBtn" onclick="switchMode('manual')" style="flex: 1; padding: 10px; background: var(--bg-card); border: 1px solid var(--border-color); font-size: 0.9rem;">
-                            🎯 MANUEL
-                        </button>
+                    <!-- 3 modes -->
+                    <div class="mode-bar">
+                        <button id="btnSimple" class="mode-btn active"  onclick="switchMode('simple')">☀️ SIMPLE</button>
+                        <button id="btnAuto"   class="mode-btn inactive" onclick="switchMode('auto')">⚡ AUTO</button>
+                        <button id="btnPrecis" class="mode-btn inactive" onclick="switchMode('precis')">🎯 PRÉCIS</button>
                     </div>
 
-                    <select id="droneModel">
+                    <!-- Drone + FPS — communs à tous les modes -->
+                    <select id="droneModel" onchange="onDroneChange()">
                         <option value="mini5pro">DJI Mini 5 Pro</option>
+                        <option value="mini1">DJI Mavic Mini</option>
+                        <option value="gopro12">GoPro Hero 12</option>
                         <option value="o3">DJI O3 Air Unit</option>
                         <option value="o4">DJI O4 Air Unit</option>
-                        <option value="gopro12">GoPro Hero 12</option>
-                        <option value="mini1">DJI Mavic Mini</option>
                     </select>
-
                     <select id="fps">
-                        <option value="24">24 FPS (Cinématique)</option>
-                        <option value="30">30 FPS (Standard)</option>
-                        <option value="60">60 FPS (Smooth)</option>
-                        <option value="120">120 FPS (Slow Motion)</option>
+                        <option value="24">24 FPS — Cinématique</option>
+                        <option value="30">30 FPS — Standard</option>
+                        <option value="60">60 FPS — Smooth</option>
+                        <option value="120">120 FPS — Slow Motion</option>
                     </select>
 
-                    <!-- Auto Mode Fields -->
-                    <div id="autoModeFields">
+                    <!-- SIMPLE -->
+                    <div id="simpleFields">
                         <select id="lightCondition">
-                            <option value="overcast">Nuageux / Couvert</option>
-                            <option value="partlyCloudy">Partiellement nuageux</option>
-                            <option value="sunny">Ensoleillé</option>
-                            <option value="verySunny">Très ensoleillé / Neige</option>
+                            <option value="overcast">🌧️ Nuageux / Couvert</option>
+                            <option value="partlyCloudy">⛅ Partiellement nuageux</option>
+                            <option value="sunny">☀️ Ensoleillé</option>
+                            <option value="verySunny">🌞 Très ensoleillé / Neige / Mer</option>
                         </select>
                     </div>
 
-                    <!-- Manual Mode Fields -->
-                    <div id="manualModeFields" style="display: none;">
-                        <div style="position: relative;">
-                            <input type="number" id="currentShutter" placeholder="Vitesse actuelle (ex: 2000 pour 1/2000)" min="1" step="1">
-                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px; font-style: italic;">
-                                💡 Entrez la vitesse sans filtre affichée sur votre caméra
-                            </div>
+                    <!-- AUTO -->
+                    <div id="autoFields" style="display:none;">
+                        <div id="autoWeatherInfo" style="padding:10px 12px; background:rgba(6,182,212,0.08); border-radius:8px; border-left:3px solid var(--accent-cyan); font-size:0.88rem; color:var(--text-secondary);">
+                            📡 Chargez la météo d'abord
                         </div>
                     </div>
 
-                    <button onclick="calculateNDFilter()">Calculer le filtre</button>
-                </div>
+                    <!-- PRÉCIS -->
+                    <div id="precisFields" style="display:none;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+                            <div>
+                                <label class="field-label">Conditions lumineuses</label>
+                                <select id="precisLight">
+                                    <option value="overcast">🌧️ Couvert</option>
+                                    <option value="partlyCloudy">⛅ Mi-nuageux</option>
+                                    <option value="sunny">☀️ Ensoleillé</option>
+                                    <option value="verySunny">🌞 Très ensoleillé</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="field-label">Ouverture (f/) — auto drone</label>
+                                <input type="text" id="apertureDisplay" readonly style="color:var(--accent-cyan); font-weight:600; cursor:default;">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="field-label">Shutter actuel manuel (optionnel — ex: 2000 pour 1/2000)</label>
+                            <input type="number" id="shutterOverride" placeholder="Laisser vide = calcul auto" min="1" step="1">
+                        </div>
+                    </div>
 
+                    <button onclick="calculateNDFilter()" style="margin-top:4px;">Calculer le filtre</button>
+                </div>
                 <div id="filterResult"></div>
             </div>
         </div>
 
-        <!-- Map Card -->
+        <!-- ROW 2 : Checklist + Conversion vent -->
+        <div class="grid">
+
+            <!-- CHECKLIST -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">CHECKLIST PRÉ-VOL</h2>
+                    <div class="status-indicator status-orange" id="checklistDot"></div>
+                </div>
+                <div class="checklist-grid" id="checklistGrid"></div>
+                <div class="checklist-status" id="checklistBar">
+                    <span id="checklistTxt">0 / 0</span>
+                </div>
+            </div>
+
+            <!-- CONVERSION VENT -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">CONVERSION VENT</h2>
+                    <div class="status-indicator status-green"></div>
+                </div>
+                <div class="wind-input-row">
+                    <input type="number" id="windInput" placeholder="Vitesse" min="0" step="0.1" oninput="convertWind()">
+                    <select id="windUnit" onchange="convertWind()">
+                        <option value="kmh">km/h</option>
+                        <option value="mph">mph</option>
+                        <option value="ms">m/s</option>
+                        <option value="kts">nœuds</option>
+                        <option value="bft">Beaufort</option>
+                    </select>
+                </div>
+                <div class="wind-conv-grid" id="windConvGrid"></div>
+                <div class="wind-ref">
+                    <div class="wind-ref-line">
+                        <span style="color:var(--accent-green);">Bft 0–3</span> &lt;20 km/h — Idéal &nbsp;
+                        <span style="color:var(--accent-orange);">Bft 4–5</span> 20–40 km/h — Vigilance &nbsp;
+                        <span style="color:var(--accent-red);">Bft 6+</span> &gt;40 km/h — Déconseillé
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARTE -->
         <div class="grid">
             <div class="card map-card">
                 <div class="card-header">
                     <h2 class="card-title">CARTE & RESTRICTIONS</h2>
                     <span class="info-badge">Restrictions UAS</span>
                 </div>
-                <div style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(16, 185, 129, 0.05)); border-radius: 10px; border-left: 4px solid var(--accent-cyan);">
-                    <div style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 8px; font-weight: 600;">
-                        🚁 Vérification des zones UAS général
-                        <a href="https://www.drone-spot.tech/" target="_blank" 
-                        style="font-weight: 400; font-size: 1rem; color: #f59e0b; margin-left: 5px; text-decoration: underline;">
-                            (Drone Spot)
-                        </a>
-                    </div>
-                    <div style="font-size: 0.80rem; color: var(--text-secondary); line-height: 1.5;">
-                        Entrez un pays pour avoir les restrictions locales
-                    </div>
+                <div style="margin-bottom:12px; padding:12px; background:linear-gradient(135deg,rgba(6,182,212,0.08),rgba(16,185,129,0.04)); border-radius:9px; border-left:3px solid var(--accent-cyan);">
+                    <span style="font-size:0.9rem; font-weight:600;">🚁 Zones UAS —</span>
+                    <a href="https://www.drone-spot.tech/" target="_blank" style="font-size:0.9rem; color:var(--accent-orange); text-decoration:underline; margin-left:4px;">Drone Spot</a>
+                    <span style="font-size:0.78rem; color:var(--text-secondary); display:block; margin-top:2px;">La carte officielle du pays s'affiche après recherche d'une ville.</span>
                 </div>
                 <div id="droneMapLinkContainer"></div>
                 <div id="map"></div>
-
                 <div class="info-box">
-                    <h4>⚠️</h4>
-                    <p>
-                        Nothing to Report, take care.
-                    </p>
+                    <p>⚠️ Nothing to Report, take care.</p>
                 </div>
-
             </div>
         </div>
     </div>
 
     <script>
-        let map;
-        let userMarker;
+    // ============================================================
+    //  CARTE LEAFLET
+    // ============================================================
+    let map, userMarker;
 
-        // Initialisation de la carte
-        function initMap(lat = 48.8566, lon = 2.3522) {
-            if (!map) {
-                map = L.map('map').setView([lat, lon], 13);
-                
-                // Couche de base OpenStreetMap
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '',
-                    maxZoom: 19
-                }).addTo(map);
-
-                // Couche de restrictions UAS - WMTS du Géoportail (TOUJOURS visible)
-                L.tileLayer('https://data.geopf.fr/wmts?' +
-                    'SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0' +
-                    '&LAYER=TRANSPORTS.DRONES.RESTRICTIONS' +
-                    '&STYLE=normal' +
-                    '&FORMAT=image/png' +
-                    '&TILEMATRIXSET=PM' +
-                    '&TILEMATRIX={z}' +
-                    '&TILEROW={y}' +
-                    '&TILECOL={x}', {
-                    attribution: '',
-                    maxZoom: 18,
-                    opacity: 0.7
-                }).addTo(map);
-
-                // Ajouter un contrôle d'échelle
-                L.control.scale({
-                    imperial: false,
-                    metric: true
-                }).addTo(map);
-            } else {
-                map.setView([lat, lon], 13);
-            }
-
-            if (userMarker) {
-                map.removeLayer(userMarker);
-            }
-
-            userMarker = L.marker([lat, lon]).addTo(map)
-                .bindPopup('📍 Votre position')
-                .openPopup();
-        }    
-
-        // Recherche d'adresse
-        function searchLocation() {
-            const address = document.getElementById('searchAddress').value;
-            if (!address) {
-                alert('Veuillez entrer une adresse');
-                return;
-            }
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        const lat = parseFloat(data[0].lat);
-                        const lon = parseFloat(data[0].lon);
-                        initMap(lat, lon);
-                    } else {
-                        alert('Adresse non trouvée');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur de géocodage:', error);
-                    alert('Erreur lors de la recherche de l\'adresse');
-                });
+    function initMap(lat = 48.8566, lon = 2.3522) {
+        if (!map) {
+            map = L.map('map').setView([lat, lon], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '', maxZoom: 19 }).addTo(map);
+            L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=TRANSPORTS.DRONES.RESTRICTIONS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', { attribution: '', maxZoom: 18, opacity: 0.7 }).addTo(map);
+            L.control.scale({ imperial: false, metric: true }).addTo(map);
+        } else {
+            map.setView([lat, lon], 13);
         }
+        if (userMarker) map.removeLayer(userMarker);
+        userMarker = L.marker([lat, lon]).addTo(map).bindPopup('📍 Votre position').openPopup();
+    }
 
-        // Géolocalisation
-        function getCurrentLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        initMap(lat, lon);
-                    },
-                    (error) => {
-                        alert('Impossible d\'obtenir votre position. Vérifiez les autorisations de localisation.');
-                    }
-                );
-            } else {
-                alert('La géolocalisation n\'est pas supportée par votre navigateur');
-            }
-        }
+    // ============================================================
+    //  MÉTÉO
+    // ============================================================
+    let lastWeatherData = null;
 
-        
-        // Météo par géolocalisation
-        async function getWeatherByLocation() {
-            if (!navigator.geolocation) {
-                alert("La géolocalisation n'est pas supportée par votre navigateur");
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-
-                // Reverse geocoding pour récupérer le pays
-                try {
-                    const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=fr`);
-                    const geoData = await geoRes.json();
-                    if (geoData && geoData.country_code) {
-                        const code = geoData.country_code.toUpperCase();
-                        const name = geoData.country || "";
-                        getDroneMapByCountry(code, name);
-                    }
-                } catch(e) { console.warn("Reverse geocoding failed", e); }
-
-                await fetchWeatherData(lat, lon);
-                initMap(lat, lon);
-            }, (error) => {
-                alert("Erreur de géolocalisation: " + error.message);
-            });
-        }
-
-        // Météo par ville
-        async function getWeatherByCity() {
-            const city = document.getElementById('cityInput').value;
-            if (!city) {
-                alert("Veuillez entrer un nom de ville");
-                return;
-            }
-
+    async function getWeatherByLocation() {
+        if (!navigator.geolocation) { alert("Géolocalisation non supportée"); return; }
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const lat = pos.coords.latitude, lon = pos.coords.longitude;
             try {
-                const geoResponse = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=fr&format=json`);
-                const geoData = await geoResponse.json();
-                
-                if (!geoData.results || geoData.results.length === 0) {
-                    alert("Ville non trouvée");
-                    return;
-                }
+                const r = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=fr`);
+                const g = await r.json();
+                if (g && g.country_code) getDroneMapByCountry(g.country_code.toUpperCase(), g.country || "");
+            } catch(e) {}
+            await fetchWeatherData(lat, lon);
+            initMap(lat, lon);
+        }, (err) => alert("Géolocalisation : " + err.message));
+    }
 
-                const lat = geoData.results[0].latitude;
-                const lon = geoData.results[0].longitude;
-                
-                const countryCode = geoData.results[0].country_code ? geoData.results[0].country_code.toUpperCase() : "";
-                const countryName = geoData.results[0].country;
+    async function getWeatherByCity() {
+        const city = document.getElementById('cityInput').value.trim();
+        if (!city) { alert("Entrez un nom de ville"); return; }
+        try {
+            const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=fr&format=json`);
+            const g = await r.json();
+            if (!g.results || !g.results.length) { alert("Ville non trouvée"); return; }
+            const res = g.results[0];
+            if (res.country_code) getDroneMapByCountry(res.country_code.toUpperCase(), res.country || "");
+            await fetchWeatherData(res.latitude, res.longitude);
+            initMap(res.latitude, res.longitude);
+        } catch(e) { alert("Erreur lors de la recherche"); }
+    }
 
-                getDroneMapByCountry(countryCode, countryName);
-
-                await fetchWeatherData(lat, lon);
-                initMap(lat, lon);
-            } catch (error) {
-                console.error("Erreur:", error);
-                alert("Erreur lors de la recherche de la ville");
-            }
+    async function fetchWeatherData(lat, lon) {
+        try {
+            // Ajout de relative_humidity_2m pour afficher l'humidité
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation,wind_speed_10m,wind_gusts_10m,visibility,relative_humidity_2m&daily=sunrise,sunset&timezone=auto`);
+            const data = await res.json();
+            lastWeatherData = data;
+            displayWeatherData(data);
+            updateAutoInfo(data);
+        } catch(e) {
+            document.getElementById('weatherData').innerHTML = '<p style="color:var(--accent-red);">Erreur de chargement météo</p>';
         }
+    }
 
-        // Récupération des données météo
-        async function fetchWeatherData(lat, lon) {
-            try {
-                const weatherResponse = await fetch(
-                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation,wind_speed_10m,wind_gusts_10m,visibility&daily=sunrise,sunset&timezone=auto`
-                );
-                const weatherData = await weatherResponse.json();
+    function displayWeatherData(data) {
+        const temp     = data.current.temperature_2m;
+        const wind     = data.current.wind_speed_10m * 3.6;
+        const gusts    = data.current.wind_gusts_10m * 3.6;
+        const prec     = data.current.precipitation;
+        const vis      = data.current.visibility / 1000;
+        const humidity = data.current.relative_humidity_2m; // %
 
-                displayWeatherData(weatherData);
-            } catch (error) {
-                console.error("Erreur:", error);
-                document.getElementById('weatherData').innerHTML = 
-                    '<p style="color: var(--accent-red);">Erreur de chargement des données météo</p>';
-            }
-        }
+        const sunrise = new Date(data.daily.sunrise[0]);
+        const sunset  = new Date(data.daily.sunset[0]);
+        const now     = new Date(data.current.time);
+        const isDay   = now >= sunrise && now <= sunset;
 
-        // Affichage des données météo
-        function displayWeatherData(data) {
-            const temp = data.current.temperature_2m;
-            const windSpeed = data.current.wind_speed_10m * 3.6; // Conversion en km/h
-            const precipitation = data.current.precipitation;
+        // Statuts
+        const ws  = wind < 25 ? 'safe' : wind < 40 ? 'warning' : 'danger';
+        const gs  = gusts < 30 ? 'safe' : gusts < 60 ? 'warning' : 'danger';
+        const ps  = prec === 0 ? 'safe' : prec < 2.5 ? 'warning' : 'danger';
+        const ts  = (temp >= 5 && temp <= 35) ? 'safe' : (temp > -5 && temp <= 40) ? 'warning' : 'danger';
+        const vs  = vis >= 5 ? 'safe' : vis >= 2 ? 'warning' : 'danger';
+        const ds  = isDay ? 'safe' : 'danger';
+        // Humidité : >85% = risque condensation/buée capteur
+        const hs  = humidity < 70 ? 'safe' : humidity < 85 ? 'warning' : 'danger';
 
-            // Détermination du statut pour chaque paramètre
-            const windStatus = windSpeed < 25 ? 'safe' : windSpeed < 40 ? 'warning' : 'danger';
-            const rainStatus = precipitation === 0 ? 'safe' : precipitation < 2.5 ? 'warning' : 'danger';
-            const tempStatus = (temp >= 5 && temp <= 35) ? 'safe' : 
-                               (temp >= 0 && temp < 10) || (temp > 35 && temp <= 40) ? 'warning' : 'danger';
-            const gusts = data.current.wind_gusts_10m * 3.6; // km/h
-            const visibility = data.current.visibility / 1000; // km
+        const overall = [ws,gs,ps,ts,vs,ds,hs].includes('danger') ? 'danger' : [ws,gs,ps,ts,vs,ds,hs].includes('warning') ? 'warning' : 'safe';
+        const rainDesc = prec === 0 ? 'Aucune' : prec < 2.5 ? 'Légère' : 'Forte';
 
-            const sunrise = new Date(data.daily.sunrise[0]);
-            const sunset = new Date(data.daily.sunset[0]);
-            const now = new Date(data.current.time);
+        // Widget soleil
+        const dayMs   = sunset.getTime() - sunrise.getTime();
+        const elapsed = Math.max(0, Math.min(now.getTime() - sunrise.getTime(), dayMs));
+        const pct     = dayMs > 0 ? (elapsed / dayMs) * 100 : 0;
+        const clamped = Math.min(94, Math.max(6, pct));
+        const sunIcon = isDay ? '☀️' : (now < sunrise ? '🌑' : '🌙');
 
+        // Couleur barre humidité
+        const humColor = humidity < 70 ? 'var(--accent-green)' : humidity < 85 ? 'var(--accent-orange)' : 'var(--accent-red)';
 
-            const isDaylight = now >= sunrise && now <= sunset;
-
-            // Détermination du statut global
-            const gustStatus =
-                gusts < 30 ? 'safe' :
-                gusts < 60 ? 'warning' : 'danger';
-
-            const visibilityStatus =
-                visibility >= 5 ? 'safe' :
-                visibility >= 2 ? 'warning' : 'danger';
-
-            const daylightStatus = isDaylight ? 'safe' : 'danger';
-            const allStatuses = [
-                windStatus,
-                gustStatus,
-                rainStatus,
-                tempStatus,
-                visibilityStatus,
-                daylightStatus
-            ];
-            let overallStatus = 'safe';
-            if (allStatuses.includes('danger')) {
-                overallStatus = 'danger';
-            } else if (allStatuses.includes('warning')) {
-                overallStatus = 'warning';
-            }
-
-            const rainDescription = precipitation === 0 ? 'Aucune' : 
-                                   precipitation < 2.5 ? 'Légère' : 'Forte';
-
-            const html = `
-                <div class="weather-grid">
-
-                    <div class="weather-item ${windStatus}">
-                        <div class="weather-label">💨 Vent en vol (10m)</div>
-                        <div class="weather-value">${windSpeed.toFixed(1)} <span class="unit">km/h</span></div>
-                    </div>
-
-                    <div class="weather-item ${gustStatus}">
-                        <div class="weather-label">🌬️ Rafales max</div>
-                        <div class="weather-value">${gusts.toFixed(0)} <span class="unit">km/h</span></div>
-                    </div>
-
-                    <div class="weather-item ${visibilityStatus}">
-                        <div class="weather-label">👁️ Visibilité</div>
-                        <div class="weather-value">${visibility.toFixed(1)} <span class="unit">km</span></div>
-                    </div>
-
-                    <div class="weather-item ${rainStatus}">
-                        <div class="weather-label">🌧️ Précipitations</div>
-                        <div class="weather-value">${rainDescription}</div>
-                    </div>
-
-                    <div class="weather-item ${tempStatus}">
-                        <div class="weather-label">🌡️ Température</div>
-                        <div class="weather-value">${temp.toFixed(1)} <span class="unit">°C</span></div>
-                    </div>
-
-                    <div class="weather-item ${daylightStatus}">
-                        <div class="weather-label">🌅 Luminosité</div>
-                        <div class="weather-value">
-                            ${isDaylight ? 'Jour' : 'Nuit'} :
-                            ${now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}<br>
-                            <div class="subtext">
-                                ${sunrise.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                –
-                                ${sunset.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                            </div>
-                        </div>
-                    </div>
-
+        document.getElementById('weatherData').innerHTML = `
+            <div class="weather-grid">
+                <div class="weather-item ${ws}">
+                    <div class="weather-label">💨 Vent (10m)</div>
+                    <div class="weather-value">${wind.toFixed(1)} <span class="unit">km/h</span></div>
                 </div>
-
-                <div class="overall-status ${overallStatus}">
-                    ${overallStatus === 'safe' ? '✅ Conditions favorables au vol' : 
-                    overallStatus === 'warning' ? '⚠️ Vol possible avec vigilance' : 
-                    '❌ Vol déconseillé'}
+                <div class="weather-item ${gs}">
+                    <div class="weather-label">🌬️ Rafales</div>
+                    <div class="weather-value">${gusts.toFixed(0)} <span class="unit">km/h</span></div>
                 </div>
-            `;
-
-
-            document.getElementById('weatherData').innerHTML = html;
-            
-            const statusIndicator = document.getElementById('weatherStatus');
-            statusIndicator.className = 'status-indicator status-' + 
-                (overallStatus === 'safe' ? 'green' : overallStatus === 'warning' ? 'orange' : 'red');
-        }
-
-        // Mode switch pour calculateur ND
-        let currentMode = 'auto';
-        
-        function switchMode(mode) {
-            currentMode = mode;
-            const autoBtn = document.getElementById('autoModeBtn');
-            const manualBtn = document.getElementById('manualModeBtn');
-            const autoFields = document.getElementById('autoModeFields');
-            const manualFields = document.getElementById('manualModeFields');
-
-            if (mode === 'auto') {
-                autoBtn.style.background = 'linear-gradient(135deg, var(--accent-cyan), var(--accent-green))';
-                autoBtn.style.border = 'none';
-                manualBtn.style.background = 'var(--bg-card)';
-                manualBtn.style.border = '1px solid var(--border-color)';
-                autoFields.style.display = 'block';
-                manualFields.style.display = 'none';
-            } else {
-                manualBtn.style.background = 'linear-gradient(135deg, var(--accent-cyan), var(--accent-green))';
-                manualBtn.style.border = 'none';
-                autoBtn.style.background = 'var(--bg-card)';
-                autoBtn.style.border = '1px solid var(--border-color)';
-                autoFields.style.display = 'none';
-                manualFields.style.display = 'block';
-            }
-        }
-
-        // Calculateur de filtre ND - VERSION RÉALISTE
-        function calculateNDFilter() {
-            const fps = parseInt(document.getElementById('fps').value);
-            const droneModel = document.getElementById('droneModel').value;
-            
-            // Règle des 180° : vitesse d'obturation cible = 1/(2 × fps)
-            const targetShutterSpeed = 2 * fps;
-            const shutterSpeedFraction = `1/${targetShutterSpeed}`;
-
-            let currentShutterSpeed;
-            let estimatedRange = '';
-
-            if (currentMode === 'manual') {
-                // Mode manuel : l'utilisateur entre sa vitesse actuelle
-                const input = document.getElementById('currentShutter').value;
-                if (!input || input <= 0) {
-                    alert("Veuillez entrer une vitesse d'obturation valide (ex: 2000 pour 1/2000)");
-                    return;
-                }
-                currentShutterSpeed = parseInt(input);
-            } else {
-                // Mode auto : estimation basée sur les conditions lumineuses
-                const lightCondition = document.getElementById('lightCondition').value;
-                
-                // Estimations réalistes de vitesse d'obturation sans filtre
-                switch(lightCondition) {
-                    case 'overcast':
-                        currentShutterSpeed = 750; // ~1/500 à 1/1000
-                        estimatedRange = '(estimation: 1/500 - 1/1000)';
-                        break;
-                    case 'partlyCloudy':
-                        currentShutterSpeed = 1500; // ~1/1000 à 1/2000
-                        estimatedRange = '(estimation: 1/1000 - 1/2000)';
-                        break;
-                    case 'sunny':
-                        currentShutterSpeed = 3000; // ~1/2000 à 1/4000
-                        estimatedRange = '(estimation: 1/2000 - 1/4000)';
-                        break;
-                    case 'verySunny':
-                        currentShutterSpeed = 6000; // ~1/4000 à 1/8000
-                        estimatedRange = '(estimation: 1/4000 - 1/8000)';
-                        break;
-                }
-
-                // Ajustement GoPro (capteur plus sensible)
-                if (droneModel === 'gopro12') {
-                    currentShutterSpeed = Math.round(currentShutterSpeed * 1.3);
-                }
-            }
-
-            // CALCUL EXACT selon l'article : current ÷ target = facteur ND nécessaire
-            const ndFactorNeeded = currentShutterSpeed / targetShutterSpeed;
-
-            // Gamme complète de filtres ND disponibles
-            const availableFilters = [
-                { name: 'ND4', factor: 4, stops: 2, usage: 'Légère réduction, jours nuageux' },
-                { name: 'ND8', factor: 8, stops: 3, usage: 'Nuageux lumineux, intérieur lumineux' },
-                { name: 'ND16', factor: 16, stops: 4, usage: 'Ensoleillé modéré, vidéo standard' },
-                { name: 'ND32', factor: 32, stops: 5, usage: 'Plein soleil, protection standard' },
-                { name: 'ND64', factor: 64, stops: 6, usage: 'Très ensoleillé, réflexions eau/neige' },
-                { name: 'ND128', factor: 128, stops: 7, usage: 'Soleil intense + surfaces réfléchissantes' },
-                { name: 'ND256', factor: 256, stops: 8, usage: 'Conditions extrêmes' },
-                { name: 'ND512', factor: 512, stops: 9, usage: 'Hyperlapses, neige éclatante' }
-            ];
-
-            // Trouver le filtre le plus proche du facteur calculé
-            let bestFilter = availableFilters[0];
-            let secondBestFilter = availableFilters[0];
-            let minDiff = Math.abs(availableFilters[0].factor - ndFactorNeeded);
-
-            for (let i = 0; i < availableFilters.length; i++) {
-                const diff = Math.abs(availableFilters[i].factor - ndFactorNeeded);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    secondBestFilter = bestFilter;
-                    bestFilter = availableFilters[i];
-                } else if (i > 0 && availableFilters[i].factor > bestFilter.factor) {
-                    secondBestFilter = availableFilters[i];
-                    break;
-                }
-            }
-
-            // Si le facteur nécessaire est entre deux filtres, proposer les deux
-            if (bestFilter.factor < ndFactorNeeded && secondBestFilter.factor > bestFilter.factor) {
-                // Le facteur nécessaire est entre deux filtres
-            } else if (bestFilter.factor > ndFactorNeeded) {
-                // Le meilleur filtre est déjà trop fort, proposer aussi un plus faible
-                const index = availableFilters.indexOf(bestFilter);
-                if (index > 0) {
-                    secondBestFilter = availableFilters[index - 1];
-                }
-            } else {
-                // Le meilleur filtre est trop faible, proposer un plus fort
-                const index = availableFilters.indexOf(bestFilter);
-                if (index < availableFilters.length - 1) {
-                    secondBestFilter = availableFilters[index + 1];
-                }
-            }
-
-            const html = `
-                <div class="filter-result">
-                    <h3 style="color: var(--accent-cyan); margin-bottom: 15px; font-family: 'Inconsolata', monospace;">
-                        RECOMMANDATIONS
-                    </h3>
-                    
-                    <div style="margin-bottom: 20px; padding: 15px; background: rgba(6, 182, 212, 0.1); border-radius: 8px; border-left: 4px solid var(--accent-cyan);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <div>
-                                <div style="color: var(--text-secondary); font-size: 0.9rem;">Vitesse cible (règle 180°)</div>
-                                <div class="shutter-speed">${shutterSpeedFraction}s</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="color: var(--text-secondary); font-size: 0.9rem;">Vitesse actuelle ${estimatedRange}</div>
-                                <div class="shutter-speed">1/${currentShutterSpeed}s</div>
-                            </div>
-                        </div>
-                        <div style="padding-top: 10px; border-top: 1px solid var(--border-color);">
-                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Facteur ND nécessaire</div>
-                            <div style="font-size: 1.4rem; font-weight: 700; color: var(--accent-green); font-family: 'Inconsolata', monospace;">
-                                ND${Math.round(ndFactorNeeded)} (${ndFactorNeeded.toFixed(1)} calculé)
-                            </div>
+                <div class="weather-item ${vs}">
+                    <div class="weather-label">👁️ Visibilité</div>
+                    <div class="weather-value">${vis.toFixed(1)} <span class="unit">km</span></div>
+                </div>
+                <div class="weather-item ${ps}">
+                    <div class="weather-label">🌧️ Précipitations</div>
+                    <div class="weather-value" style="font-size:1.3rem;">${rainDesc}</div>
+                </div>
+                <div class="weather-item ${ts}">
+                    <div class="weather-label">🌡️ Température</div>
+                    <div class="weather-value">${temp.toFixed(1)} <span class="unit">°C</span></div>
+                </div>
+                <div class="weather-item ${hs}">
+                    <div class="weather-label">💧 Humidité — risque buée</div>
+                    <div class="weather-value">${humidity} <span class="unit">%</span></div>
+                    <div class="humidity-row">
+                        <div class="humidity-bar-bg">
+                            <div class="humidity-bar-fill" style="width:${humidity}%; background:${humColor};"></div>
                         </div>
                     </div>
+                </div>
+                <div class="sun-widget ${ds}">
+                    <div class="weather-label">🌅 Ensoleillement</div>
+                    <div class="sun-bar-wrap">
+                        <div class="sun-bar-bg"></div>
+                        <div class="sun-bar-day" style="width:${pct.toFixed(1)}%;"></div>
+                        <div class="sun-icon" style="left:${clamped.toFixed(1)}%;">${sunIcon}</div>
+                    </div>
+                    <div class="sun-row">
+                        <span>🌄 ${sunrise.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
+                        <span style="color:var(--text-primary); font-weight:600;">${isDay ? 'JOUR' : 'NUIT'} · ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
+                        <span>🌇 ${sunset.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="overall-status ${overall}">
+                ${overall === 'safe' ? '✅ Conditions favorables au vol' : overall === 'warning' ? '⚠️ Vol possible avec vigilance' : '❌ Vol déconseillé'}
+            </div>`;
 
-                    <div class="filter-recommendation" style="border-left-color: var(--accent-green); background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), transparent);">
+        document.getElementById('weatherStatus').className = 'status-indicator status-' + (overall === 'safe' ? 'green' : overall === 'warning' ? 'orange' : 'red');
+    }
+
+    function updateAutoInfo(data) {
+        const wind = data.current.wind_speed_10m * 3.6;
+        const prec = data.current.precipitation;
+        const sunrise = new Date(data.daily.sunrise[0]);
+        const sunset  = new Date(data.daily.sunset[0]);
+        const now     = new Date(data.current.time);
+        const isDay   = now >= sunrise && now <= sunset;
+        let lcLabel = 'Ensoleillé';
+        if (!isDay)      lcLabel = 'Nuit (couvert)';
+        else if (prec>0) lcLabel = 'Nuageux / Couvert';
+        else if (wind>30) lcLabel = 'Partiellement nuageux';
+        document.getElementById('autoWeatherInfo').innerHTML = `
+            <span style="color:var(--accent-cyan); font-family:'Inconsolata',monospace; font-size:0.82rem;">📡 MÉTÉO CHARGÉE</span><br>
+            🌡️ ${data.current.temperature_2m.toFixed(1)}°C &nbsp;|&nbsp; 💨 ${wind.toFixed(0)} km/h &nbsp;|&nbsp; ${isDay ? '☀️ Jour' : '🌙 Nuit'}<br>
+            <span style="color:var(--accent-green);">→ Condition déduite : ${lcLabel}</span>`;
+    }
+
+    // ============================================================
+    //  FILTRE ND
+    // ============================================================
+    let currentMode = 'simple';
+
+    // Ouverture réelle par drone (fixe, non modifiable)
+    const DRONE_SPECS = {
+        mini5pro: { f: 1.7, label: 'f/1.7' },
+        mini1:    { f: 2.8, label: 'f/2.8' },
+        gopro12:  { f: 2.5, label: 'f/2.5' },
+        o3:       { f: 2.8, label: 'f/2.8' },
+        o4:       { f: 2.8, label: 'f/2.8' },
+    };
+
+    // EV100 Sunny-16 par condition lumineuse
+    const LIGHT_EV = { overcast: 12, partlyCloudy: 14, sunny: 15, verySunny: 16 };
+
+    function onDroneChange() {
+        const model = document.getElementById('droneModel').value;
+        const spec  = DRONE_SPECS[model];
+        const el    = document.getElementById('apertureDisplay');
+        if (el && spec) el.value = spec.label;
+    }
+
+    function switchMode(mode) {
+        currentMode = mode;
+        ['simple','auto','precis'].forEach(m => {
+            const btn = document.getElementById('btn' + m.charAt(0).toUpperCase() + m.slice(1));
+            const fields = document.getElementById(m + 'Fields');
+            const active = m === mode;
+            btn.className = 'mode-btn ' + (active ? 'active' : 'inactive');
+            if (fields) fields.style.display = active ? 'block' : 'none';
+        });
+    }
+
+    function calculateNDFilter() {
+        const fps          = parseInt(document.getElementById('fps').value);
+        const droneModel   = document.getElementById('droneModel').value;
+        const spec         = DRONE_SPECS[droneModel];
+        const targetShutter = 2 * fps;
+        const shutterFrac   = `1/${targetShutter}`;
+
+        let currentShutter, estimatedRange = '', methodNote = '';
+
+        if (currentMode === 'simple') {
+            const lc = document.getElementById('lightCondition').value;
+            const MAP = { overcast:[500,1000,750], partlyCloudy:[1000,2000,1500], sunny:[2000,4000,3000], verySunny:[4000,8000,6000] };
+            const [lo, hi, mid] = MAP[lc];
+            currentShutter = mid;
+            estimatedRange = `estim. 1/${lo}–1/${hi}`;
+            methodNote = '☀️ Mode Simple';
+
+        } else if (currentMode === 'auto') {
+            if (!lastWeatherData) { alert("Chargez d'abord la météo"); return; }
+            const wind = lastWeatherData.current.wind_speed_10m * 3.6;
+            const prec = lastWeatherData.current.precipitation;
+            const sunrise = new Date(lastWeatherData.daily.sunrise[0]);
+            const sunset  = new Date(lastWeatherData.daily.sunset[0]);
+            const now     = new Date(lastWeatherData.current.time);
+            const isDay   = now >= sunrise && now <= sunset;
+            let lc = 'sunny';
+            if (!isDay || prec > 0) lc = 'overcast';
+            else if (wind > 30) lc = 'partlyCloudy';
+            const MAP = { overcast:[500,1000,750], partlyCloudy:[1000,2000,1500], sunny:[2000,4000,3000], verySunny:[4000,8000,6000] };
+            const [lo, hi, mid] = MAP[lc];
+            currentShutter = mid;
+            estimatedRange = `estim. 1/${lo}–1/${hi}`;
+            methodNote = `⚡ Mode Auto — météo (${isDay ? 'Jour' : 'Nuit'}, vent ${wind.toFixed(0)} km/h)`;
+
+        } else { // précis
+            // Shutter override manuel ?
+            const overrideVal = document.getElementById('shutterOverride').value;
+            if (overrideVal && parseInt(overrideVal) > 0) {
+                currentShutter = parseInt(overrideVal);
+                estimatedRange = `shutter manuel 1/${currentShutter}`;
+                methodNote = `🎯 Mode Précis — shutter saisi manuellement`;
+            } else {
+                // Calcul via EV (ISO 100 fixe, ouverture drone)
+                const lc      = document.getElementById('precisLight').value;
+                const ev100   = LIGHT_EV[lc];
+                const aperture = spec.f;
+                // SS = 2^EV / N²  (ISO 100)
+                const rawSS = Math.pow(2, ev100) / (aperture * aperture);
+                const stdSpeeds = [125,160,200,250,320,400,500,640,800,1000,1250,1600,2000,2500,3200,4000,5000,6400,8000];
+                currentShutter = stdSpeeds.reduce((p, c) => Math.abs(c - rawSS) < Math.abs(p - rawSS) ? c : p);
+                estimatedRange = `EV${ev100}, ${spec.label}, ISO 100`;
+                methodNote = `🎯 Mode Précis — calcul EV → 1/${currentShutter}`;
+            }
+        }
+
+        const ndNeeded = currentShutter / targetShutter;
+
+        const FILTERS = [
+            { name:'ND4',   factor:4,   stops:2, usage:'Légère réduction, jours nuageux' },
+            { name:'ND8',   factor:8,   stops:3, usage:'Nuageux lumineux' },
+            { name:'ND16',  factor:16,  stops:4, usage:'Ensoleillé modéré' },
+            { name:'ND32',  factor:32,  stops:5, usage:'Plein soleil' },
+            { name:'ND64',  factor:64,  stops:6, usage:'Très ensoleillé / eau / neige' },
+            { name:'ND128', factor:128, stops:7, usage:'Soleil intense + réflexions' },
+            { name:'ND256', factor:256, stops:8, usage:'Conditions extrêmes' },
+            { name:'ND512', factor:512, stops:9, usage:'Hyperlapse / neige éclatante' },
+        ];
+
+        let best = FILTERS[0], minD = Math.abs(FILTERS[0].factor - ndNeeded);
+        FILTERS.forEach(f => { const d = Math.abs(f.factor - ndNeeded); if (d < minD) { minD = d; best = f; } });
+        const bi = FILTERS.indexOf(best);
+        const second = best.factor < ndNeeded ? FILTERS[Math.min(bi+1, FILTERS.length-1)] : FILTERS[Math.max(bi-1, 0)];
+
+        document.getElementById('filterResult').innerHTML = `
+            <div class="filter-result">
+                <h3 style="color:var(--accent-cyan); margin-bottom:12px; font-family:'Inconsolata',monospace; font-size:1rem;">RECOMMANDATIONS</h3>
+                <div style="margin-bottom:10px; padding:8px 12px; background:rgba(16,185,129,0.06); border-radius:7px; border-left:2px solid var(--accent-green); font-size:0.82rem; color:var(--text-secondary);">${methodNote}</div>
+                <div style="margin-bottom:14px; padding:12px; background:rgba(6,182,212,0.08); border-radius:8px; border-left:3px solid var(--accent-cyan);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
                         <div>
-                            <div class="filter-name" style="color: var(--accent-green);">
-                                🎯 #1 - Filtre ${bestFilter.name}
-                            </div>
-                            <div class="filter-details">${bestFilter.usage}</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px;">
-                                ${bestFilter.factor < ndFactorNeeded ? 
-                                    '⚠️ Légèrement sous-exposé, ajuster ISO ou diaphragme' : 
-                                    bestFilter.factor > ndFactorNeeded ?
-                                    '💡 Légèrement sur-exposé, fermer diaphragme' :
-                                    '✅ Exposition parfaite'}
-                            </div>
+                            <div style="color:var(--text-secondary); font-size:0.8rem;">Cible 180°</div>
+                            <div class="shutter-speed">${shutterFrac}s</div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Réduction</div>
-                            <div style="font-weight: 600; color: var(--accent-green); font-size: 1.2rem;">${bestFilter.stops} stops</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 3px;">Facteur ${bestFilter.factor}</div>
+                        <div style="text-align:right;">
+                            <div style="color:var(--text-secondary); font-size:0.8rem;">${estimatedRange}</div>
+                            <div class="shutter-speed">1/${currentShutter}s</div>
                         </div>
                     </div>
-
-                    <div class="filter-recommendation">
-                        <div>
-                            <div class="filter-name">#2 - Filtre ${secondBestFilter.name}</div>
-                            <div class="filter-details">${secondBestFilter.usage}</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px;">
-                                Alternative si conditions variables
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Réduction</div>
-                            <div style="font-weight: 600; color: var(--accent-cyan); font-size: 1.2rem;">${secondBestFilter.stops} stops</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 3px;">Facteur ${secondBestFilter.factor}</div>
-                        </div>
+                    <div style="padding-top:8px; border-top:1px solid var(--border-color);">
+                        <div style="color:var(--text-secondary); font-size:0.8rem;">Facteur ND nécessaire</div>
+                        <div style="font-size:1.3rem; font-weight:700; color:var(--accent-green); font-family:'Inconsolata',monospace;">ND${Math.round(ndNeeded)} <span style="font-size:0.85rem; opacity:0.7;">(${ndNeeded.toFixed(1)} calculé)</span></div>
                     </div>
-
-                    ${currentMode === 'auto' ? `
-                        <div style="margin-top: 15px; padding: 12px; background: rgba(245, 158, 11, 0.1); border-radius: 8px; border-left: 4px solid var(--accent-orange);">
-                            <div style="font-size: 0.9rem; color: var(--text-secondary);">
-                                ⚡ Mode automatique : Pour un calcul précis, passez en mode MANUEL et entrez votre vitesse d'obturation actuelle affichée sur la caméra (sans filtre).
-                            </div>
-                        </div>
-                    ` : ''}
                 </div>
-            `;
-
-            document.getElementById('filterResult').innerHTML = html;
-        }
-
-
-        function getDroneMapByCountry(countryCode, countryName = "") {
-
-            const droneMaps = {
-
-                // 🇪🇺 EUROPE — Cartes officielles UAS/EASA
-                AT: "https://utm.dronespace.at/avm/#p=5/47.74/13.23",           // Autriche — Dronespace
-                BE: "https://map.droneguide.be/",                                // Belgique — Droneguide
-                BG: "https://www.caa.bg/bg/category/633/7062",                  // Bulgarie — CAA Bulgaria
-                HR: "https://amc-en.crocontrol.hr/Current-situation-anonymous-users", // Croatie — AMC Portal
-                CY: "https://drones.gov.cy/",                                   // Chypre — Open Geozone
-                CZ: "https://dronview.rlp.cz/",                                 // Rép. Tchèque — Dronview
-                DK: "https://droneregler.dk/dronezoner",                        // Danemark — Dronezoner
-                EE: "https://aim.eans.ee/droonikaart/",                         // Estonie — Droonikaart
-                FI: "https://aviamaps.com/map?drone#p=4.89/65.69/26",          // Finlande — Aviamaps
-                DE: "https://maptool-dipul.dfs.de/?language=en&zoom=10.7",     // Allemagne — dipul
-                GR: "https://dagr.hasp.gov.gr/#map_page",                      // Grèce — HASP
-                HU: "https://terkep.legter.hu/#7/47.2/19.5",                   // Hongrie — Legter
-                IE: "https://www.iaa.ie/general-aviation/drones/uas-geographic-zones", // Irlande — IAA
-                IT: "https://www.d-flight.it/web-app/",                         // Italie — D-flight
-                LV: "https://www.airspace.lv/drones",                           // Lettonie — eUARV
-                LT: "https://www.oran.lt/",                                     // Lituanie — Oran
-                LU: "https://map.geoportail.lu/theme/main?version=3&zoom=11&X=692148&Y=6376138&lang=fr&rotation=0&layers=1928-1927&opacities=0.5-0.5&bgLayer=basemap_2015_global", // Luxembourg
-                MT: "https://tmcad.idronect.com/users/sign-in",                // Malte — TM-CAD
-                NL: "https://map.godrone.nl/",                                  // Pays-Bas — GoDrone
-                NO: "https://www.safetofly.no/",                                // Norvège — Safetofly
-                PL: "https://dronemap.pansa.pl/",                               // Pologne — DroneMap PANSA
-                PT: "https://uas.anac.pt/registry/explore",                     // Portugal — ANAC
-                RO: "https://flightplan.romatsa.ro/init/drones",                // Roumanie — ROMATSA
-                SK: "https://gis.lps.sk/vfrm/index.html",                      // Slovaquie — AIS charts
-                SI: "https://caa-slovenia.maps.arcgis.com/apps/webappviewer/index.html?id=25ba69037c264c5faa5381174f76f861", // Slovénie
-                ES: "https://experience.arcgis.com/experience/79e8bc79e61e4456b1b673cd0a397001", // Espagne — ArcGIS ENAIRE
-                SE: "https://daim.lfv.se/echarts/dronechart/",                 // Suède — LFV
-                CH: "https://app.swissuspace.ch/",                              // Suisse — SwissUSpace
-                GB: "https://www.caa.co.uk/our-work/projects/drones/",         // Royaume-Uni — CAA UK
-                IS: null,  // Islande — aucune carte en ligne officielle (grisé)
-
-                // 🌎 AMÉRIQUE
-                US: "https://faa.maps.arcgis.com/apps/webappviewer/index.html?id=9c2e4406710048b59bca7c8e8b9a02b3", // USA — FAA
-                CA: "https://nrc.canada.ca/en/drone-tool/",                    // Canada — NRC
-                BR: "https://www.decea.mil.br/drone",                           // Brésil — DECEA
-                MX: "https://portal.sct.gob.mx/SitePages/drones.aspx",        // Mexique — SCT
-
-                // 🌏 ASIE-PACIFIQUE
-                AU: "https://dronecompliance.casa.gov.au/map",                  // Australie — CASA
-                NZ: "https://www.airshare.co.nz/maps",                         // Nouvelle-Zélande — Airshare
-                JP: "https://www.mlit.go.jp/koku/drone/en/",                   // Japon — MLIT
-                SG: "https://dronesafesg.caas.gov.sg/",                        // Singapour — CAAS
-                KR: "https://www.dronesafety.kr/map/list.do",                  // Corée du Sud
-                IN: "https://digitalsky.dgca.gov.in/",                         // Inde — DigitalSky
-
-                // 🌍 AFRIQUE & MOYEN-ORIENT
-                ZA: "https://www.caa.co.za/Pages/Drones/Drone-operators.aspx", // Afrique du Sud — CAA
-                AE: "https://uas.gcaa.gov.ae/",                                // Émirats Arabes Unis — GCAA
-            };
-
-            const container = document.getElementById("droneMapLinkContainer");
-
-            // 🔁 Toujours vider avant d'afficher
-            container.innerHTML = "";
-
-            // 🇫🇷 Si France → ne rien afficher
-            if (countryCode === "FR") {
-                return;
-            }
-
-            if (countryCode in droneMaps) {
-                const flag = getFlagEmoji(countryCode);
-                const url = droneMaps[countryCode];
-
-                container.innerHTML = `
-                    <div style="margin-bottom:15px; padding:15px; 
-                                background:rgba(245,158,11,0.1);
-                                border-left:4px solid var(--accent-orange);
-                                border-radius:8px;">
-                        🌍 Restrictions drone officielles détectées pour 
-                        <strong>${countryName || countryCode}</strong><br><br>
-                        <button 
-                            ${url ? `onclick="window.open('${url}','_blank')"` : 'disabled'}
-                            style="padding:10px 15px; ${!url ? 'opacity:0.4; cursor:not-allowed; background:#555; background-image:none;' : ''}">
-                            ${url ? `🔎 Voir la carte officielle ${flag}` : `🚫 Aucune carte officielle en ligne ${flag}`}
-                        </button>
+                <div class="filter-recommendation" style="border-left-color:var(--accent-green); background:linear-gradient(90deg,rgba(16,185,129,0.12),transparent);">
+                    <div>
+                        <div class="filter-name" style="color:var(--accent-green);">🎯 #1 — ${best.name}</div>
+                        <div class="filter-details">${best.usage}</div>
+                        <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:4px;">
+                            ${best.factor < ndNeeded ? '⚠️ Légèrement sous-exposé' : best.factor > ndNeeded ? '💡 Légèrement sur-exposé' : '✅ Exposition parfaite'}
+                        </div>
                     </div>
-                `;
-            }
-        }
+                    <div style="text-align:right; flex-shrink:0;">
+                        <div style="font-size:0.8rem; color:var(--text-secondary);">Réduction</div>
+                        <div style="font-weight:600; color:var(--accent-green); font-size:1.1rem;">${best.stops} stops</div>
+                    </div>
+                </div>
+                <div class="filter-recommendation">
+                    <div>
+                        <div class="filter-name">#2 — ${second.name}</div>
+                        <div class="filter-details">${second.usage}</div>
+                        <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:4px;">Alternative conditions variables</div>
+                    </div>
+                    <div style="text-align:right; flex-shrink:0;">
+                        <div style="font-size:0.8rem; color:var(--text-secondary);">Réduction</div>
+                        <div style="font-weight:600; color:var(--accent-cyan); font-size:1.1rem;">${second.stops} stops</div>
+                    </div>
+                </div>
+            </div>`;
+    }
 
-        function getFlagEmoji(countryCode) {
-            if (!countryCode || countryCode.length !== 2) return "";
+    // ============================================================
+    //  CHECKLIST
+    // ============================================================
+    const ITEMS = [
+        { id:'bat_drone', label:'🔋 Batteries drone' },
+        { id:'bat_ctrl',  label:'🔋 Radiocommande' },
+        { id:'bat_phone', label:'📱 Téléphone/tablette' },
+        { id:'sd_card',   label:'💾 Carte mémoire' },
+        { id:'lenses',    label:'🔭 Filtres propres' },
+        { id:'props',     label:'⚙️ Hélices OK' },
+        { id:'dgac',      label:'📋 DGAC / télépilote' },
+        { id:'notam',     label:'🗺️ NOTAM vérifié' },
+        { id:'meteo',     label:'🌤️ Météo consultée' },
+        { id:'calib',     label:'🧭 Boussole calibrée' },
+        { id:'homepoint', label:'📍 Homepoint défini' },
+        { id:'rtm',       label:'📡 Signal RC OK' },
+    ];
+    const checkState = {};
+    ITEMS.forEach(i => checkState[i.id] = false);
 
-            return countryCode
-                .toUpperCase()
-                .replace(/./g, char => 
-                    String.fromCodePoint(127397 + char.charCodeAt())
-                );
-        }
+    function buildChecklist() {
+        document.getElementById('checklistGrid').innerHTML = ITEMS.map(item => `
+            <div class="checklist-item" id="ci-${item.id}" onclick="toggleCheck('${item.id}')">
+                <div class="check-box" id="cb-${item.id}"></div>
+                <span class="check-label">${item.label}</span>
+            </div>`).join('');
+        updateChecklist();
+    }
 
+    function toggleCheck(id) {
+        checkState[id] = !checkState[id];
+        document.getElementById('ci-' + id).classList.toggle('checked', checkState[id]);
+        document.getElementById('cb-' + id).textContent = checkState[id] ? '✓' : '';
+        updateChecklist();
+    }
 
+    function updateChecklist() {
+        const total = ITEMS.length;
+        const done  = Object.values(checkState).filter(Boolean).length;
+        const bar   = document.getElementById('checklistBar');
+        document.getElementById('checklistTxt').textContent = done === total ? `${done}/${total} — Prêt au décollage ! 🚀` : `${done} / ${total} — Complétez avant le vol`;
+        bar.classList.toggle('all-done', done === total);
+        document.getElementById('checklistDot').className = 'status-indicator ' + (done === total ? 'status-green' : 'status-orange');
+    }
 
-        // Initialisation au chargement
-        window.onload = function() {
-            initMap(); // carte par défaut (Paris)
+    // ============================================================
+    //  CONVERSION VENT
+    // ============================================================
+    function convertWind() {
+        const raw  = parseFloat(document.getElementById('windInput').value);
+        const unit = document.getElementById('windUnit').value;
+        const grid = document.getElementById('windConvGrid');
+        if (isNaN(raw) || raw < 0) { grid.innerHTML = ''; return; }
 
+        let ms;
+        if      (unit === 'kmh') ms = raw / 3.6;
+        else if (unit === 'mph') ms = raw * 0.44704;
+        else if (unit === 'ms')  ms = raw;
+        else if (unit === 'kts') ms = raw * 0.514444;
+        else                     ms = Math.pow(raw / 0.836, 2/3);
+
+        const kmh = ms * 3.6;
+        const mph = ms / 0.44704;
+        const kts = ms / 0.514444;
+        const bft = ms < 0.3 ? 0 : Math.min(12, Math.round(Math.pow(ms / 0.836, 2/3)));
+
+        grid.innerHTML = [
+            { l:'km/h', v: kmh.toFixed(1) },
+            { l:'mph',  v: mph.toFixed(1) },
+            { l:'m/s',  v: ms.toFixed(2) },
+            { l:'kts',  v: kts.toFixed(1) },
+            { l:'Bft',  v: bft },
+        ].map(i => `<div class="wind-conv-item"><div class="wind-conv-label">${i.l}</div><div class="wind-conv-value">${i.v}</div></div>`).join('');
+    }
+
+    // ============================================================
+    //  CARTE PAR PAYS
+    // ============================================================
+    function getDroneMapByCountry(cc, name = "") {
+        const MAPS = {
+            AT:"https://utm.dronespace.at/avm/#p=5/47.74/13.23", BE:"https://map.droneguide.be/",
+            BG:"https://www.caa.bg/bg/category/633/7062", HR:"https://amc-en.crocontrol.hr/Current-situation-anonymous-users",
+            CY:"https://drones.gov.cy/", CZ:"https://dronview.rlp.cz/",
+            DK:"https://droneregler.dk/dronezoner", EE:"https://aim.eans.ee/droonikaart/",
+            FI:"https://aviamaps.com/map?drone#p=4.89/65.69/26", DE:"https://maptool-dipul.dfs.de/?language=en&zoom=10.7",
+            GR:"https://dagr.hasp.gov.gr/#map_page", HU:"https://terkep.legter.hu/#7/47.2/19.5",
+            IE:"https://www.iaa.ie/general-aviation/drones/uas-geographic-zones", IT:"https://www.d-flight.it/web-app/",
+            LV:"https://www.airspace.lv/drones", LT:"https://www.oran.lt/",
+            LU:"https://map.geoportail.lu/theme/main?version=3&zoom=11&X=692148&Y=6376138&lang=fr&rotation=0&layers=1928-1927&opacities=0.5-0.5&bgLayer=basemap_2015_global",
+            MT:"https://tmcad.idronect.com/users/sign-in", NL:"https://map.godrone.nl/",
+            NO:"https://www.safetofly.no/", PL:"https://dronemap.pansa.pl/",
+            PT:"https://uas.anac.pt/registry/explore", RO:"https://flightplan.romatsa.ro/init/drones",
+            SK:"https://gis.lps.sk/vfrm/index.html",
+            SI:"https://caa-slovenia.maps.arcgis.com/apps/webappviewer/index.html?id=25ba69037c264c5faa5381174f76f861",
+            ES:"https://drones.enaire.es/", SE:"https://daim.lfv.se/echarts/dronechart/",
+            CH:"https://app.swissuspace.ch/", GB:"https://www.caa.co.uk/our-work/projects/drones/",
+            IS:null,
+            US:"https://faa.maps.arcgis.com/apps/webappviewer/index.html?id=9c2e4406710048b59bca7c8e8b9a02b3",
+            CA:"https://nrc.canada.ca/en/drone-tool/", BR:"https://www.decea.mil.br/drone",
+            MX:"https://portal.sct.gob.mx/SitePages/drones.aspx",
+            AU:"https://dronecompliance.casa.gov.au/map", NZ:"https://www.airshare.co.nz/maps",
+            JP:"https://www.mlit.go.jp/koku/drone/en/", SG:"https://dronesafesg.caas.gov.sg/",
+            KR:"https://www.dronesafety.kr/map/list.do", IN:"https://digitalsky.dgca.gov.in/",
+            ZA:"https://www.caa.co.za/Pages/Drones/Drone-operators.aspx", AE:"https://uas.gcaa.gov.ae/",
         };
+
+        const container = document.getElementById("droneMapLinkContainer");
+        container.innerHTML = "";
+        if (cc === "FR") return;
+        if (!(cc in MAPS)) return;
+
+        const flag = cc.toUpperCase().replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt()));
+        const url  = MAPS[cc];
+        const btn  = url
+            ? `<button onclick="window.open('${url}','_blank')" style="padding:9px 14px; font-size:0.9rem;">🔎 Carte officielle ${flag}</button>`
+            : `<button disabled style="padding:9px 14px; opacity:0.4; cursor:not-allowed; background:#555; background-image:none;">🚫 Aucune carte officielle ${flag}</button>`;
+
+        container.innerHTML = `
+            <div style="margin-bottom:12px; padding:12px; background:rgba(245,158,11,0.08); border-left:3px solid var(--accent-orange); border-radius:8px;">
+                🌍 <strong>${name || cc}</strong> — restrictions détectées<br><br>${btn}
+            </div>`;
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    window.onload = function() {
+        initMap();
+        buildChecklist();
+        onDroneChange(); // initialise l'affichage f/ du drone
+    };
     </script>
 </body>
 </html>
