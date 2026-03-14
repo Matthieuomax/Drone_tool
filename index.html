@@ -800,7 +800,7 @@
                 return;
             }
 
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&countrycodes=fr&limit=1`)
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`)
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.length > 0) {
@@ -846,9 +846,21 @@
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
+
+                // Reverse geocoding pour récupérer le pays
+                try {
+                    const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=fr`);
+                    const geoData = await geoRes.json();
+                    if (geoData && geoData.country_code) {
+                        const code = geoData.country_code.toUpperCase();
+                        const name = geoData.country || "";
+                        getDroneMapByCountry(code, name);
+                    }
+                } catch(e) { console.warn("Reverse geocoding failed", e); }
+
                 await fetchWeatherData(lat, lon);
                 initMap(lat, lon);
-                fetchWeatherData(lat, lon);            }, (error) => {
+            }, (error) => {
                 alert("Erreur de géolocalisation: " + error.message);
             });
         }
@@ -873,12 +885,10 @@
                 const lat = geoData.results[0].latitude;
                 const lon = geoData.results[0].longitude;
                 
-                const countryCode = geoData.results[0].country_code;
+                const countryCode = geoData.results[0].country_code ? geoData.results[0].country_code.toUpperCase() : "";
                 const countryName = geoData.results[0].country;
 
                 getDroneMapByCountry(countryCode, countryName);
-
-                fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=fr`)
 
                 await fetchWeatherData(lat, lon);
                 initMap(lat, lon);
@@ -1216,33 +1226,55 @@
 
             const droneMaps = {
 
-                // 🇪🇺 EUROPE
-                BE: "https://map.droneguide.be/",
-                AT: "https://utm.dronespace.at/avm/",
-                CZ: "https://dronemap.gov.cz/",
-                DK: "https://www.en.droneregler.dk/uas-geographical-zones",
-                EE: "https://utm.eans.ee/avm/",
-                IE: "https://www.iaa.ie/general-aviation/drones/uas-geographic-zones",
-                IT: "https://www.d-flight.it/web-app/",
-                LV: "https://www.airspace.lv/drones",
-                LT: "https://utm.ans.lt/avm/",
-                NL: "https://map.godrone.nl/",
-                PL: "https://dronemap.pansa.pl/",
-                RO: "https://flightplan.romatsa.ro/init/drones",
-                SE: "https://daim.lfv.se/echarts/dronechart/",
-                CH: "https://map.geo.admin.ch/",
-                DE: "https://maptool-dipul.dfs.de/?language=en&zoom=10.7",
-                ES: "", // Espagne (à compléter plus tard)
-                GB: "", // Royaume-Uni (à compléter plus tard)
+                // 🇪🇺 EUROPE — Cartes officielles UAS/EASA
+                AT: "https://utm.dronespace.at/avm/#p=5/47.74/13.23",           // Autriche — Dronespace
+                BE: "https://map.droneguide.be/",                                // Belgique — Droneguide
+                BG: "https://www.caa.bg/bg/category/633/7062",                  // Bulgarie — CAA Bulgaria
+                HR: "https://amc-en.crocontrol.hr/Current-situation-anonymous-users", // Croatie — AMC Portal
+                CY: "https://drones.gov.cy/",                                   // Chypre — Open Geozone
+                CZ: "https://dronview.rlp.cz/",                                 // Rép. Tchèque — Dronview
+                DK: "https://droneregler.dk/dronezoner",                        // Danemark — Dronezoner
+                EE: "https://aim.eans.ee/droonikaart/",                         // Estonie — Droonikaart
+                FI: "https://aviamaps.com/map?drone#p=4.89/65.69/26",          // Finlande — Aviamaps
+                DE: "https://maptool-dipul.dfs.de/?language=en&zoom=10.7",     // Allemagne — dipul
+                GR: "https://dagr.hasp.gov.gr/#map_page",                      // Grèce — HASP
+                HU: "https://terkep.legter.hu/#7/47.2/19.5",                   // Hongrie — Legter
+                IE: "https://www.iaa.ie/general-aviation/drones/uas-geographic-zones", // Irlande — IAA
+                IT: "https://www.d-flight.it/web-app/",                         // Italie — D-flight
+                LV: "https://www.airspace.lv/drones",                           // Lettonie — eUARV
+                LT: "https://www.oran.lt/",                                     // Lituanie — Oran
+                LU: "https://map.geoportail.lu/theme/main?version=3&zoom=11&X=692148&Y=6376138&lang=fr&rotation=0&layers=1928-1927&opacities=0.5-0.5&bgLayer=basemap_2015_global", // Luxembourg
+                MT: "https://tmcad.idronect.com/users/sign-in",                // Malte — TM-CAD
+                NL: "https://map.godrone.nl/",                                  // Pays-Bas — GoDrone
+                NO: "https://www.safetofly.no/",                                // Norvège — Safetofly
+                PL: "https://dronemap.pansa.pl/",                               // Pologne — DroneMap PANSA
+                PT: "https://uas.anac.pt/registry/explore",                     // Portugal — ANAC
+                RO: "https://flightplan.romatsa.ro/init/drones",                // Roumanie — ROMATSA
+                SK: "https://gis.lps.sk/vfrm/index.html",                      // Slovaquie — AIS charts
+                SI: "https://caa-slovenia.maps.arcgis.com/apps/webappviewer/index.html?id=25ba69037c264c5faa5381174f76f861", // Slovénie
+                ES: "https://experience.arcgis.com/experience/79e8bc79e61e4456b1b673cd0a397001", // Espagne — ArcGIS ENAIRE
+                SE: "https://daim.lfv.se/echarts/dronechart/",                 // Suède — LFV
+                CH: "https://app.swissuspace.ch/",                              // Suisse — SwissUSpace
+                GB: "https://www.caa.co.uk/our-work/projects/drones/",         // Royaume-Uni — CAA UK
+                IS: null,  // Islande — aucune carte en ligne officielle (grisé)
 
+                // 🌎 AMÉRIQUE
+                US: "https://faa.maps.arcgis.com/apps/webappviewer/index.html?id=9c2e4406710048b59bca7c8e8b9a02b3", // USA — FAA
+                CA: "https://nrc.canada.ca/en/drone-tool/",                    // Canada — NRC
+                BR: "https://www.decea.mil.br/drone",                           // Brésil — DECEA
+                MX: "https://portal.sct.gob.mx/SitePages/drones.aspx",        // Mexique — SCT
 
-                // 🌎 AUTRES
-                US: "https://faa.maps.arcgis.com/apps/webappviewer/index.html?id=9c2e4406710048b59bca7c8e8b9a02b3",
-                CA: "https://nrc.canada.ca/en/drone-tool/",
-                AU: "https://dronecompliance.casa.gov.au/map",
-                NZ: "https://www.airshare.co.nz/maps",
-                BR: "https://www.decea.mil.br/drone",
-                JP: "https://www.mlit.go.jp/koku/drone/en/"
+                // 🌏 ASIE-PACIFIQUE
+                AU: "https://dronecompliance.casa.gov.au/map",                  // Australie — CASA
+                NZ: "https://www.airshare.co.nz/maps",                         // Nouvelle-Zélande — Airshare
+                JP: "https://www.mlit.go.jp/koku/drone/en/",                   // Japon — MLIT
+                SG: "https://dronesafesg.caas.gov.sg/",                        // Singapour — CAAS
+                KR: "https://www.dronesafety.kr/map/list.do",                  // Corée du Sud
+                IN: "https://digitalsky.dgca.gov.in/",                         // Inde — DigitalSky
+
+                // 🌍 AFRIQUE & MOYEN-ORIENT
+                ZA: "https://www.caa.co.za/Pages/Drones/Drone-operators.aspx", // Afrique du Sud — CAA
+                AE: "https://uas.gcaa.gov.ae/",                                // Émirats Arabes Unis — GCAA
             };
 
             const container = document.getElementById("droneMapLinkContainer");
@@ -1257,6 +1289,7 @@
 
             if (countryCode in droneMaps) {
                 const flag = getFlagEmoji(countryCode);
+                const url = droneMaps[countryCode];
 
                 container.innerHTML = `
                     <div style="margin-bottom:15px; padding:15px; 
@@ -1266,13 +1299,10 @@
                         🌍 Restrictions drone officielles détectées pour 
                         <strong>${countryName || countryCode}</strong><br><br>
                         <button 
-                            ${droneMaps[countryCode] ? 
-                                `onclick="window.open('${droneMaps[countryCode]}','_blank')"` 
-                                : 'disabled'}
-                            style="padding:10px 15px; ${!droneMaps[countryCode] ? 'opacity:0.5; cursor:not-allowed;' : ''}">
-                            🔎 Voir la carte officielle ${flag}
+                            ${url ? `onclick="window.open('${url}','_blank')"` : 'disabled'}
+                            style="padding:10px 15px; ${!url ? 'opacity:0.4; cursor:not-allowed; background:#555; background-image:none;' : ''}">
+                            ${url ? `🔎 Voir la carte officielle ${flag}` : `🚫 Aucune carte officielle en ligne ${flag}`}
                         </button>
-
                     </div>
                 `;
             }
